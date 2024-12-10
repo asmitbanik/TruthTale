@@ -12,19 +12,19 @@ function fetchReviewsFromSite(site) {
 
     switch (site) {
         case 'google':
-            reviews = document.querySelectorAll('.section-review-content'); // Google Maps
+            reviews = document.querySelectorAll('.section-review-content');
             break;
         case 'yelp':
-            reviews = document.querySelectorAll('.review'); // Yelp
+            reviews = document.querySelectorAll('.review');
             break;
         case 'amazon':
-            reviews = document.querySelectorAll('.review-text'); // Amazon
+            reviews = document.querySelectorAll('.review-text'); 
             break;
         case 'tripadvisor':
-            reviews = document.querySelectorAll('.partial_entry'); // TripAdvisor
+            reviews = document.querySelectorAll('.partial_entry'); 
             break;
         case 'trustpilot':
-            reviews = document.querySelectorAll('.review-content__text'); // Trustpilot
+            reviews = document.querySelectorAll('.review-content__text'); 
             break;
         default:
             console.warn('Unsupported site');
@@ -299,29 +299,13 @@ function createShareButtons(reviewElement, review) {
         window.open(shareUrl);
     };
 
-    const instagramButton = document.createElement('button');
-    instagramButton.innerText = 'Share on Instagram';
-    instagramButton.onclick = () => {
-        alert('Instagram sharing is not supported directly via URL. Please copy the text and share it on Instagram.');
-    };
-
-    const snapchatButton = document.createElement('button');
-    snapchatButton.innerText = 'Share on Snapchat';
-    snapchatButton.onclick = () => {
-        alert('Snapchat sharing is not supported directly via URL. Please copy the text and share it on Snapchat.');
-    };
-
-    // Append buttons to the share container
+    
     shareContainer.appendChild(twitterButton);
     shareContainer.appendChild(facebookButton);
     shareContainer.appendChild(linkedinButton);
-    shareContainer.appendChild(instagramButton);
-    shareContainer.appendChild(snapchatButton);
-
     reviewElement.appendChild(shareContainer);
 }
 
-// Function to notify users about updates
 function notifyUpdate(message) {
     chrome.notifications.create({
         type: 'basic',
@@ -332,29 +316,23 @@ function notifyUpdate(message) {
     });
 }
 
-// Call this function when an update is available
 notifyUpdate('New features have been added to the extension!');
 
-// Function to save user notification preferences
 function saveNotificationPreferences(preferences) {
     chrome.storage.sync.set({ notificationPreferences: preferences }, () => {
         console.log('Notification preferences saved');
     });
 }
 
-// Function to load user notification preferences
 function loadNotificationPreferences() {
     chrome.storage.sync.get('notificationPreferences', (data) => {
         if (data.notificationPreferences) {
-            // Apply preferences to your extension
         }
     });
 }
 
-// Call loadNotificationPreferences on extension startup
 loadNotificationPreferences();
 
-// Function to create a rating system for each review
 function createRatingSystem(reviewElement, review) {
     const ratingContainer = document.createElement('div');
     ratingContainer.className = 'rating-container';
@@ -362,14 +340,13 @@ function createRatingSystem(reviewElement, review) {
     for (let i = 1; i <= 5; i++) {
         const star = document.createElement('span');
         star.innerText = '⭐';
-        star.onclick = () => submitRating(review.id, i); // Submit rating
+        star.onclick = () => submitRating(review.id, i); 
         ratingContainer.appendChild(star);
     }
 
     reviewElement.appendChild(ratingContainer);
 }
 
-// Function to submit rating
 function submitRating(reviewId, rating) {
     fetch('/rate_review', {
         method: 'POST',
@@ -380,7 +357,7 @@ function submitRating(reviewId, rating) {
     })
     .then(response => response.json())
     .then(data => {
-        alert(data.message); // Notify user of rating submission
+        alert(data.message);
     })
     .catch(error => {
         console.error('Error submitting rating:', error);
@@ -388,7 +365,6 @@ function submitRating(reviewId, rating) {
     });
 }
 
-// Function to create a chart for review analysis
 function createReviewChart(reviews) {
     const ctx = document.getElementById('reviewChart').getContext('2d');
     const labels = ['Fake', 'Suspicious', 'Genuine'];
@@ -418,7 +394,6 @@ function createReviewChart(reviews) {
     });
 }
 
-// Function to fetch reviews from Trustpilot
 function fetchTrustpilotReviews(businessId) {
     fetch(`https://api.trustpilot.com/v1/reviews?businessId=${businessId}`, {
         headers: {
@@ -427,7 +402,6 @@ function fetchTrustpilotReviews(businessId) {
     })
     .then(response => response.json())
     .then(data => {
-        // Process and display Trustpilot reviews
         displayReviews(data.reviews);
     })
     .catch(error => {
@@ -435,7 +409,6 @@ function fetchTrustpilotReviews(businessId) {
     });
 }
 
-// Function to toggle dark mode
 function toggleDarkMode(isDarkMode) {
     if (isDarkMode) {
         document.body.classList.add('dark-mode');
@@ -444,7 +417,6 @@ function toggleDarkMode(isDarkMode) {
     }
 }
 
-// Example CSS for dark mode
 const style = document.createElement('style');
 style.innerHTML = `
     .dark-mode {
@@ -454,14 +426,12 @@ style.innerHTML = `
 `;
 document.head.appendChild(style);
 
-// Function to update user profile
 function updateUserProfile(newProfileData) {
     chrome.storage.sync.set({ userProfile: newProfileData }, () => {
         console.log('User profile updated');
     });
 }
 
-// Function to sort reviews
 function sortReviews(reviews, criteria) {
     return reviews.sort((a, b) => {
         if (criteria === 'date') {
@@ -469,40 +439,35 @@ function sortReviews(reviews, criteria) {
         } else if (criteria === 'rating') {
             return b.rating - a.rating;
         } else {
-            return 0; // Default case
+            return 0;
         }
     });
 }
 
-// Example usage
 const sortedReviews = sortReviews(allReviews, 'date');
 
-// Function to search reviews
 function searchReviews(reviews, query) {
     return reviews.filter(review => review.text.toLowerCase().includes(query.toLowerCase()));
 }
 
-// Example usage
 const searchQuery = document.getElementById('searchInput').value;
 const filteredReviewsBySearch = searchReviews(allReviews, searchQuery);
 
-// Function to apply user-defined highlighting
 function applyUserHighlighting(reviews) {
     reviews.forEach(review => {
         const reviewElement = document.querySelector(`#review-${review.id}`);
         if (reviewElement) {
             if (review.is_fake) {
-                reviewElement.style.backgroundColor = userPreferences.fakeColor; // User-defined color
+                reviewElement.style.backgroundColor = userPreferences.fakeColor;
             } else if (review.is_suspicious) {
-                reviewElement.style.backgroundColor = userPreferences.suspiciousColor; // User-defined color
+                reviewElement.style.backgroundColor = userPreferences.suspiciousColor;
             } else {
-                reviewElement.style.backgroundColor = userPreferences.genuineColor; // User-defined color
+                reviewElement.style.backgroundColor = userPreferences.genuineColor; 
             }
         }
     });
 }
 
-// Function to get real-time predictions
 function getRealTimePrediction(reviewText) {
     fetch('/predict', {
         method: 'POST',
@@ -513,7 +478,7 @@ function getRealTimePrediction(reviewText) {
     })
     .then(response => response.json())
     .then(data => {
-        alert(`Prediction: ${data.prediction}`); // Display prediction
+        alert(`Prediction: ${data.prediction}`); 
     })
     .catch(error => {
         console.error('Error getting prediction:', error);
@@ -521,11 +486,9 @@ function getRealTimePrediction(reviewText) {
     });
 }
 
-// Example usage
 const inputText = document.getElementById('realTimeInput').value;
 getRealTimePrediction(inputText);
 
-// Function to generate user analytics
 function generateUserAnalytics(reviews) {
     const totalReviews = reviews.length;
     const fakeReviews = reviews.filter(review => review.is_fake).length;
@@ -539,26 +502,23 @@ function generateUserAnalytics(reviews) {
     `;
 }
 
-// Function to send reviews for analysis
 function sendReviewsForAnalysis(reviews) {
     fetch('/analyze_reviews', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ reviews: reviews, user_history: userHistory }), // Include user history if needed
+        body: JSON.stringify({ reviews: reviews, user_history: userHistory }), 
     })
     .then(response => response.json())
     .then(data => {
         console.log('Analysis Results:', data);
-        // Process the analysis results
     })
     .catch(error => {
         console.error('Error analyzing reviews:', error);
     });
 }
 
-// Function to create a sentiment analysis chart
 function createSentimentChart(sentimentData) {
     const ctx = document.getElementById('sentimentChart').getContext('2d');
     const labels = ['Positive', 'Negative', 'Neutral'];
@@ -592,7 +552,6 @@ function createSentimentChart(sentimentData) {
     });
 }
 
-// Function to load user review history
 function loadUserReviewHistory() {
     chrome.storage.sync.get('userReviewHistory', (data) => {
         if (data.userReviewHistory) {
@@ -610,7 +569,6 @@ function loadUserReviewHistory() {
     });
 }
 
-// Call loadUserReviewHistory on extension startup
 loadUserReviewHistory();
 
 function showTooltip(message, targetElement) {
@@ -631,5 +589,5 @@ function showTooltip(message, targetElement) {
 
     setTimeout(() => {
         tooltip.remove();
-    }, 3000); // Tooltip will disappear after 3 seconds
+    }, 3000); 
 }
