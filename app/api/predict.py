@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request
-from ml.model import tune_and_evaluate_model  # Import your ML model prediction function
+from ml.model import tune_and_evaluate_model 
 import torch
 from transformers import BertTokenizer, BertForSequenceClassification
 from flask_cors import CORS
@@ -7,14 +7,13 @@ from flask_jwt_extended import JWTManager, jwt_required, create_access_token
 from marshmallow import Schema, fields, ValidationError
 from functools import wraps
 import time
-from app.models import Review, db  # Import the Review model and db
+from app.models import Review, db  
 
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": "https://truetale.com"}})  # Configure CORS for TrueTale
-app.config['JWT_SECRET_KEY'] = 'TrueTale_YourActualStrongRandomSecretKey'  # Change this to a strong secret
+CORS(app, resources={r"/api/*": {"origins": "https://truetale.com"}}) 
+app.config['JWT_SECRET_KEY'] = 'TrueTale_YourActualStrongRandomSecretKey' 
 jwt = JWTManager(app)
 
-# Rate Limiting
 requests_per_minute = 60
 user_requests = {}
 
@@ -32,19 +31,16 @@ def rate_limiter(f):
         return f(*args, **kwargs)
     return decorated_function
 
-# Input Validation
 class InputSchema(Schema):
     data = fields.Str(required=True)
 
-# Load the model and tokenizer
 tokenizer = BertTokenizer.from_pretrained('./multilingual_model')
 model = BertForSequenceClassification.from_pretrained('./multilingual_model')
 
 @app.route('/api/predict', methods=['POST'])
-@jwt_required()  # Protect the endpoint with JWT
-@rate_limiter  # Apply rate limiting
+@jwt_required()  
+@rate_limiter  
 def predict():
-    # Validate input
     try:
         input_data = InputSchema().load(request.json)
     except ValidationError as err:
@@ -55,15 +51,13 @@ def predict():
         if not review_text:
             return jsonify({'error': 'No review text provided'}), 400
         
-        # Tokenize the input text
         inputs = tokenizer(review_text, return_tensors='pt', truncation=True, padding=True)
         
-        # Get the model's prediction
         with torch.no_grad():
             outputs = model(**inputs)
             predictions = torch.argmax(outputs.logits, dim=-1).item()
         
-        return jsonify({'prediction': bool(predictions)})  # Convert to boolean for fake (1) or genuine (0)
+        return jsonify({'prediction': bool(predictions)})  
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
@@ -71,8 +65,6 @@ def predict():
 def login():
     username = request.json.get('username')
     password = request.json.get('password')
-    # Implement your user authentication logic here
-    # If authenticated:
     access_token = create_access_token(identity=username)
     return jsonify(access_token=access_token)
 
@@ -83,7 +75,6 @@ def handle_feedback():
     prediction = feedback_data.get('prediction')
     feedback = feedback_data.get('feedback')
 
-    # Save feedback to the database
     new_feedback = Review(text=review_text, is_fake=prediction)
     db.session.add(new_feedback)
     db.session.commit()
