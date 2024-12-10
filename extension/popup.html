@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrueTale Review Predictor</title>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id" content="YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+        .select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .loading {
+            display: none;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .result {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .feedback {
+            margin-top: 20px;
+        }
+        .feedbackResult {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .flag {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        .flag-red {
+            background-color: red;
+        }
+        .flag-yellow {
+            background-color: yellow;
+        }
+        .flag-green {
+            background-color: green;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>TrueTale Review Predictor</h1>
+        <button id="startAnalysis" class="button">Start Analysis</button>
+        <div id="reviewsContainer"></div>
+        <div id="loading" class="loading">Scanning...</div>
+        <div id="result" class="result"></div>
+        <div class="feedback">
+            <label for="feedbackInput">Provide Feedback:</label>
+            <input type="text" id="feedbackInput" class="select" placeholder="Your feedback here..." disabled>
+            <button id="submitFeedback" class="button" disabled>Submit Feedback</button>
+            <div id="feedbackResult" class="feedbackResult"></div>
+        </div>
+        <div id="helpSection">
+            <h2>User Guide</h2>
+            <p>Here are some tips on how to use the extension...</p>
+            <!-- Add more detailed instructions -->
+        </div>
+        <div id="errorMessage" style="color: red; display: none;"></div>
+    </div>
+    <script src="popup.js"></script>
+</body>
+</html>
